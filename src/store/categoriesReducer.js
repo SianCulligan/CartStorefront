@@ -1,31 +1,27 @@
 const initState = {
-    allCategories: [
-        { name: 'Ollivanders', displayName: 'Ollivanders' },
-        { name: 'Flourish and Blotts', displayName: 'Flourish and Blotts' },
-        { name: 'Quality Quidditch Supplies', displayName: 'Quality Quidditch Supplies' }
-    ],
-    currentCategory: 'Ollivanders',
+    categoriesList: [],
+    currentCategory: '',
+
 };
 
 const reducer = (state = initState, action) => {
-    console.log('categories reducer called');
-    let newState = { ...state };
+let newState = { ...state };
 
-    switch (action.type) {
-        case 'CONSOLE_LOG':
-            console.log('categories');
-            break;
-        case 'CHANGE_CATEGORY':
-            newState.currentCategory = action.payload;
-            break;
-        case 'ADD_CATEGORY':
-            newState.allCategories.push(action.payload);
-            break;
-        default:
-            break;
-    }
+switch (action.type) {
+  case "GET_CATEGORIES":
+    newState.categoriesList = action.payload;
+    break;
+  case "CHANGE_CATEGORY":
+    newState.currentCategory = action.payload;
+    break;
+  case "ADD_CATEGORY":
+    newState.categoriesList.push(action.payload);
+    break;
+  default:
+    break;
+}
 
-    return newState;
+return newState;
 };
 
 export default reducer;

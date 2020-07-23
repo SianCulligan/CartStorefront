@@ -7,12 +7,11 @@ import categoriesReducer from './categoriesReducer';
 import productReducer from './productReducer';
 
 
-let reducers = combineReducers ({
+let reducers = {
     cart: cartReducer,
     categories: categoriesReducer,
     products: productReducer,
-    
-});
+};
 
 const store = () => createStore(combineReducers(reducers), composeWithDevTools(applyMiddleware(thunk)));
 

@@ -1,50 +1,79 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Button } from '@material-ui/core';
-import { consoleLog } from '../store/cartReducer';
+import React from "react";
+import {useEffect} from 'react'
+import { connect } from "react-redux";
+import { Card, Button, CardMedia, Typography, CardActions, CardActionArea, CardContent} from "@material-ui/core";
+import * as actions from '../store/storeAction'
+import {Link} from 'react-router-dom';
 
 function Products(props) {
-
+    const { getProducts} = props;
     let productsHTML = [];
 
-    for (let i = 0; i < props.products.length; i++) {
-        if (props.products[i].category === props.currentCategory) {
-            console.log('PRODUCTS', props.products[i].category);
-    
-                productsHTML.push(
-                    <div key={i}>
-                 <h3 className="prodName" >{props.products[i].name}</h3>
-                 
-               <img className="prodImg" src={props.products[i].imgURL} alt={props.products[i].name} /> 
-                <p className="prodDesc" >{props.products[i].description}</p>
-                <p className="prodPrice" >Price: ${props.products[i].price}</p>
-                <p className="prodStock" >Quantity in Stock: {props.products[i].stock}</p>
-                <Button variant="contained" color="primary" disableElevation>
-                    ADD TO CART
-                </Button>  
-                    </div>
-                ) }}
+    useEffect( () => {
+        getProducts();
+        }, [getProducts])
 
-    return (
-        <>
-            <h2>Products</h2>
-            {productsHTML}
-            <Button
+    const styles = {
+        image: {
+        height: "200px", 
+    }};
+
+    for (let i = 0; i < props.products.length; i++) {
+        if (props.products[i].category === props.currentCategory)
+        productsHTML.push(
+
+        <Card key={props.products[i]._id} style={{ maxWidth: 250, padding: '5px',borderColor: 'primary', display: 'inline-block' }}>
+
+        <CardActionArea>
+            <CardMedia 
+                style={styles.image}
+                className="media"
+                image={`https://source.unsplash.com/random?${props.products[i].name}`}
+                title={props.products[i].name}
+            />
+
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                {props.products[i].name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                {props.products[i].description}
+                </Typography>
+            </CardContent>
+        </CardActionArea>
+
+        <CardActions>
+
+            <Button 
+                size="small" 
+                color="default"
                 onClick={(e) => {
-                    consoleLog(props.dispatch);
-                }}
-            >
-                Run CONSOLE_LOG action
+                props.addToCart(props.products[i]);}}> 
+                Add To Cart 
             </Button>
-        </>
+
+            <Link to={`/details/${props.product[i]._id}`}>Details</Link>
+
+        </CardActions>
+    </Card>
     );
+    }
+
+    return <>{productsHTML} </>;
 }
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products.allProducts,
+        products: state.products.initProducts,
         currentCategory: state.categories.currentCategory,
-    };
-};
+        cartCount: state.cart.cartCount,
+        cartContents: state.cart.cartContents
+}}
 
-export default connect(mapStateToProps)(Products);
+const mapDispatchToProps = (dispatch, getState) => ({
+    getProducts: (data) => dispatch(actions.getProducts(data)),
+
+    addToCart: (data) => dispatch(actions.addToCart(data)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
